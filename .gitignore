@@ -1,4 +1,2 @@
-docker-publish2.yaml
-.github/workflows/docker-publish2.yaml
 Dockerfile
 index.html
