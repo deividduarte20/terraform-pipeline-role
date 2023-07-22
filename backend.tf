@@ -1,7 +1,7 @@
 terraform {
   backend "s3" {
     bucket = "duarte2012"
-    key    = "/"
+    key    = "state"
     region = "us-east-1"
   }
 }
