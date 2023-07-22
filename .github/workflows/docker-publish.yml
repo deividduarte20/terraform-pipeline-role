@@ -1,47 +1,48 @@
-name: Deploy to ECR
+name: 'Terraform'
 
 on:
- 
   push:
-    branches: [ main ]
-  
-env:
-  ECR_REGISTRY: public.ecr.aws/329667351664
+    branches: [ "main" ]
+  pull_request:
+
+permissions:
+  id-token: write
+  contents: read
 
 jobs:
-  
-  build:
-    
-    name: Build Image
+  terraform:
+    name: 'Terraform'
     runs-on: ubuntu-latest
-  
-    permissions:
-      id-token: write # obrigatório para usar autenticação OIDC
-      contents: read # obrigatório para clonar o código do repositório'
-   
+    environment: production
+    defaults:
+      run:
+        shell: bash
+
     steps:
-
-    - name: Check out code
-      uses: actions/checkout@v2
-    
-    - name: configure aws credentials
-      uses: aws-actions/configure-aws-credentials@v1
+    - name: Configure aws credentials
+      uses: aws-actions/configure-aws-credentials@v2
       with:
-        role-to-assume: arn:aws:iam::329667351664:role/RoleCIBuildPushECR  #${{ secrets.ROLEARN }}
-        role-duration-seconds: 900 # o TTL da sessão, em segundos.
-        aws-region: us-east-1 # sua região
+        role-to-assume: ${{ secrets.ROLEARN }}
+        aws-region: us-east-1
 
-    - name: Login to Amazon ECR
-      id: login-ecr-public
-      uses: aws-actions/amazon-ecr-login@v1
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v2
       with:
-        registry-type: public
+        terraform_version: 1.4.6
 
-    - name: Build, tag, and push image to Amazon ECR
-      env:
-        IMAGE_NAME: docker-python3
-        IMAGE_TAG: ${{ github.sha }}
-        ECR_REPOSITORY: docker-python
-      run: |
-        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
-        docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+    - name: Terraform Init
+      run: terraform init
+
+    - name: Terraform Format
+      run: terraform fmt -check
+
+    - name: Terraform Plan
+      run: terraform plan -input=false
+
+      # On push to "main", deploy the Terraform infrastructure
+    - name: Terraform Apply
+      if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+      run: terraform apply -auto-approve -input=false
