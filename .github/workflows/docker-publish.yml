@@ -14,19 +14,25 @@ jobs:
     
     name: Build Image
     runs-on: ubuntu-latest
-
+  
+    permissions:
+      id-token: write # obrigatório para usar autenticação OIDC
+      contents: read # obrigatório para clonar o código do repositório'
    
     steps:
 
     - name: Check out code
       uses: actions/checkout@v2
     
-    - name: Configure AWS credentials
+    - name: configure aws credentials
       uses: aws-actions/configure-aws-credentials@v1
       with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: us-east-1
+        role-to-assume: ${{ secrets.ROLEARN }}
+        role-duration-seconds: 900 # o TTL da sessão, em segundos.
+        aws-region: us-east-1 # sua região
+    # 👇 Agora você pode executar comandos que usarão a suas credenciais
+    - name: Serverless deploy
+      run: sls deploy --stage dev
 
     - name: Login to Amazon ECR
       id: login-ecr-public
