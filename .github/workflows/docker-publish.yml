@@ -30,9 +30,6 @@ jobs:
         role-to-assume: ${{ secrets.ROLEARN }}
         role-duration-seconds: 900 # o TTL da sessão, em segundos.
         aws-region: us-east-1 # sua região
-    # 👇 Agora você pode executar comandos que usarão a suas credenciais
-    - name: Serverless deploy
-      run: sls deploy --stage dev
 
     - name: Login to Amazon ECR
       id: login-ecr-public
