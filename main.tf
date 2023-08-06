@@ -10,7 +10,6 @@ module "stack_bucket" {
 
 }
 
-
 # module "stack_bucket1" {
 #   source      = "./modules/bucket-pagamentos"
 #   bucket_name = "pagamentos-test-1"
