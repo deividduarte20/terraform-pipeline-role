@@ -28,6 +28,11 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v3
 
+    - name: Install Terragrunt
+      run: |
+        wget -O /usr/local/bin/terragrunt https://github.com/gruntwork-io/terragrunt/releases/download/v0.37.0/terragrunt_linux_amd64
+        chmod +x /usr/local/bin/terragrunt
+
     - name: Setup Terraform
       uses: hashicorp/setup-terraform@v2
       with:
@@ -45,7 +50,5 @@ jobs:
     - name: Terraform Plan
       run: terraform plan -input=false
 
-      # On push to "main", deploy the Terraform infrastructure
-    - name: Terraform Apply
-      if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-      run: terraform apply -auto-approve -input=false
+    - name: Terragrunt Apply
+      run: terragrunt apply --auto-approve
