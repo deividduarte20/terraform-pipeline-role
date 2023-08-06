@@ -1,9 +1,9 @@
 name: 'Terraform'
 
 on:
-  push:
-    branches: [ "main" ]
   pull_request:
+    types:
+      - closed
 
 permissions:
   id-token: write
@@ -27,11 +27,6 @@ jobs:
 
     - name: Checkout
       uses: actions/checkout@v3
-
-    - name: Install Terragrunt
-      run: |
-        wget -O /usr/local/bin/terragrunt https://github.com/gruntwork-io/terragrunt/releases/download/v0.37.0/terragrunt_linux_amd64
-        chmod +x /usr/local/bin/terragrunt
 
     - name: Setup Terraform
       uses: hashicorp/setup-terraform@v2
