@@ -10,15 +10,15 @@ module "stack_bucket" {
 
 }
 
-# module "stack_bucket1" {
-#   source      = "./modules/bucket-pagamentos"
-#   bucket_name = "pagamentos-test-1"
+module "stack_bucket1" {
+   source      = "./modules/bucket-pagamentos"
+   bucket_name = "pagamentos-test-1"
 
-#   tags = {
-#     Environment = "Production"
-#     Owner       = "Deivid Duarte"
-#     Project     = "My Project"
-#   }
+   tags = {
+     Environment = "Production"
+     Owner       = "Deivid Duarte"
+     Project     = "My Project"
+   }
 
-# }
+}
 
